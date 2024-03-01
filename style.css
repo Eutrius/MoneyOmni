@@ -1,0 +1,292 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+:root {
+  --bgBody: #eeeff6;
+  --textColor: #555555;
+  --purple: #9032d4;
+  --red: #e24114;
+  --green: #4cbb17;
+  --light-grey: #f7f7f7;
+  --middle-grey: #eee;
+  --white: #fff;
+  --dark-grey: #c0c0c0;
+  --blue: #00ffff;
+  --black: #000;
+}
+
+button,
+select,
+#date {
+  cursor: pointer;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+}
+
+#container {
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bgBody);
+  width: 100vw;
+  height: 100vh;
+  font-family:
+    system-ui,
+    -apple-system,
+    Roboto,
+    sans-serif;
+}
+
+#app {
+  flex-direction: column;
+  background: var(--light-grey);
+  width: 375px;
+  height: min(667px, 100vh);
+  padding: 15px 15px 0px 15px;
+  border-radius: 10px;
+}
+
+#home {
+  flex: 1;
+  flex-direction: column;
+}
+
+#header {
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  color: var(--red);
+}
+
+#balance {
+  font-weight: 700;
+  font-size: 30px;
+}
+
+#form-div {
+  margin-bottom: 15px;
+}
+
+#entry-form {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 5px;
+
+  * {
+    height: 30px;
+    border-radius: 3px;
+    min-width: 0px;
+    background-color: var(--middle-grey);
+    padding-left: 5px;
+  }
+
+  *.error {
+    outline: solid 1px var(--red);
+  }
+}
+
+#note {
+  grid-column: span 2;
+}
+
+#amount::-webkit-outer-spin-button,
+#amount::-webkit-inner-spin-button,
+#category-selector {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#category-selector,
+#date[value=""],
+*::placeholder {
+  color: var(--dark-grey);
+}
+
+#category-selector {
+  option {
+    color: var(--black);
+  }
+}
+
+#date::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+#add-entry {
+  background-color: var(--purple);
+  padding: 0px;
+  color: var(--white);
+}
+
+#entry-list {
+  padding-inline: 0px;
+}
+
+#menu-button {
+  opacity: 0.5;
+  height: 35px;
+  width: 35px;
+  padding: 5px;
+  margin-inline: auto;
+  background: url(./images/menu.png) no-repeat;
+  background-origin: content-box;
+  background-color: inherit;
+  background-size: cover;
+}
+
+#categories {
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding-inline: 20px;
+
+  h2 {
+    color: var(--purple);
+    margin-bottom: 10px;
+  }
+}
+
+#category-list {
+  width: 100%;
+  border-bottom: solid 1.5px var(--dark-grey);
+  flex-direction: column;
+  gap: 15px;
+}
+
+#add-category {
+  font-size: 20px;
+  margin-top: 15px;
+  margin-bottom: 25px;
+  padding: 1px 30px;
+  background-color: inherit;
+  border: solid 1px var(--dark-grey);
+}
+
+#menu-button:hover,
+#add-category:hover {
+  background-color: var(--dark-grey);
+}
+
+#new-category {
+  background-color: var(--middle-grey);
+  padding-left: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  height: 30px;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  gap: 20px;
+
+  div:first-child {
+    width: 160px;
+    h6 {
+      word-wrap: break-word;
+      font-size: 15px;
+    }
+    p {
+      color: var(--dark-grey);
+      font-size: 10px;
+    }
+  }
+
+  div:nth-child(2) {
+    visibility: hidden;
+  }
+
+  div:last-child {
+    flex: 1;
+    display: flex;
+    justify-content: end;
+  }
+}
+
+.entry:hover {
+  background-color: var(--middle-grey);
+
+  div:nth-child(2) {
+    visibility: visible;
+  }
+}
+
+.category {
+  display: flex;
+
+  input {
+    pointer-events: none;
+    padding-left: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    height: 30px;
+    background-color: inherit;
+    flex: 1;
+  }
+
+  div {
+    padding-right: 15px;
+  }
+}
+
+.edit-delete-buttons {
+  display: flex;
+  button {
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+    border-radius: 5px;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-size: cover;
+    background-color: inherit;
+  }
+
+  button:hover {
+    background-color: var(--dark-grey);
+  }
+
+  button:first-child {
+    background-image: url(./images/edit.png);
+    margin-right: 5px;
+  }
+
+  button:last-child {
+    background-image: url(./images/delete.png);
+  }
+}
+
+.overflow-scroll {
+  padding: 10px 0px;
+  flex: 1;
+  flex-basis: 0;
+  overflow-y: auto;
+}
+
+.white-container {
+  background-color: var(--white);
+  padding: 7px;
+  border-radius: 10px;
+}
+
+.positive {
+  color: var(--green);
+}
+
+.flex {
+  display: flex;
+}
+
+.none {
+  display: none;
+}
