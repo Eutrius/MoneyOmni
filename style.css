@@ -157,6 +157,7 @@ select:focus {
 
 #category-list {
   width: 100%;
+  padding-bottom: 0;
   border-bottom: solid 1.5px var(--dark-grey);
   flex-direction: column;
   gap: 15px;
@@ -178,22 +179,23 @@ select:focus {
 
 #new-category {
   background-color: var(--middle-grey);
-  padding-left: 10px;
+  padding: 5px 0px 5px 10px;
   font-weight: 600;
   font-size: 15px;
-  height: 30px;
+  position: sticky;
+  bottom: 0;
 }
 
 .entry {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr;
   padding: 8px 15px;
-  gap: 20px;
+  gap: 15px;
 
   div:first-child {
-    width: 160px;
     h6 {
-      word-wrap: break-word;
+      word-break: break-all;
+      overflow-wrap: break-word;
       font-size: 15px;
     }
     p {
@@ -207,9 +209,8 @@ select:focus {
   }
 
   div:last-child {
-    flex: 1;
-    display: flex;
-    justify-content: end;
+    word-break: break-all;
+    justify-self: right;
   }
 }
 
@@ -225,13 +226,14 @@ select:focus {
   display: flex;
 
   input {
+    flex: 1;
+    width: 100%;
     pointer-events: none;
     padding-left: 10px;
     font-size: 15px;
     font-weight: 600;
     height: 30px;
     background-color: inherit;
-    flex: 1;
   }
 
   div {
@@ -267,7 +269,7 @@ select:focus {
 }
 
 .overflow-scroll {
-  padding: 10px 0px;
+  padding-inline: 0;
   flex: 1;
   flex-basis: 0;
   overflow-y: auto;

@@ -10,7 +10,7 @@
   <body>
     <div id="container" class="flex">
       <div id="app" class="flex">
-        <div id="home" class="flex">
+        <div id="home" class="flex none">
           <div id="header" class="flex">
             <img src="images/logo.png" alt="MoneyOmni" />
             <div id="balance" class="positive">$2910.5</div>
@@ -56,7 +56,7 @@
                 <button></button>
                 <button></button>
               </div>
-              <div class="positive">+$30000</div>
+              <div class="positive">+$3000</div>
             </div>
             <div class="entry">
               <div>
@@ -104,7 +104,7 @@
             </div>
           </div>
         </div>
-        <div id="categories" class="white-container flex none">
+        <div id="categories" class="white-container flex">
           <h2>Categories</h2>
           <div id="category-list" class="flex overflow-scroll">
             <input
@@ -112,6 +112,7 @@
               class="none"
               type="text"
               placeholder="New Category"
+              autocomplete="off"
             />
           </div>
           <button id="add-category">+</button>
