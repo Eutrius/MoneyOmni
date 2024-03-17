@@ -37,6 +37,7 @@ select:focus {
   background-color: var(--bgBody);
   width: 100vw;
   height: 100vh;
+  color: var(--textColor);
   font-family:
     system-ui,
     -apple-system,
@@ -61,8 +62,8 @@ select:focus {
 #header {
   align-items: center;
   justify-content: space-between;
+  padding-inline: 5px;
   margin-bottom: 15px;
-  color: var(--red);
 }
 
 #balance {
@@ -76,7 +77,7 @@ select:focus {
 
 #entry-form {
   display: grid;
-  grid-template-columns: 1.5fr 1.5fr 1fr;
+  grid-template-columns: 1.3fr 1.5fr 1.2fr;
   grid-template-rows: repeat(2, 1fr);
   gap: 5px;
 
@@ -99,18 +100,18 @@ select:focus {
 
 #amount::-webkit-outer-spin-button,
 #amount::-webkit-inner-spin-button,
-#category-selector {
+#category {
   -webkit-appearance: none;
   appearance: none;
 }
 
-#category-selector,
+#category,
 #date[value=""],
 *::placeholder {
   color: var(--dark-grey);
 }
 
-#category-selector {
+#category {
   option {
     color: var(--black);
   }
@@ -128,6 +129,7 @@ select:focus {
 }
 
 #entry-list {
+  overflow-x: auto;
   padding-inline: 0px;
 }
 
@@ -137,10 +139,15 @@ select:focus {
   width: 35px;
   padding: 5px;
   margin-inline: auto;
-  background: url(./images/menu.png) no-repeat;
+  background-image: url(./images/menu.png);
+  background-repeat: no-repeat;
   background-origin: content-box;
   background-color: inherit;
   background-size: cover;
+}
+
+#menu-button.home {
+  background-image: url(./images/home.png);
 }
 
 #categories {
@@ -186,11 +193,26 @@ select:focus {
   bottom: 0;
 }
 
+#cancel-button {
+  margin-inline: auto;
+  margin-top: 20px;
+  width: 100px;
+  font-size: 18px;
+
+  img {
+    width: 25px;
+  }
+
+  p {
+    align-self: center;
+  }
+}
+
 .entry {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr;
+  grid-template-columns: 40% 30% auto;
   padding: 8px 15px;
-  gap: 15px;
+  gap: 10px;
 
   div:first-child {
     h6 {
@@ -205,11 +227,12 @@ select:focus {
   }
 
   div:nth-child(2) {
+    justify-self: right;
     visibility: hidden;
   }
 
   div:last-child {
-    word-break: break-all;
+    align-self: center;
     justify-self: right;
   }
 }
@@ -234,6 +257,11 @@ select:focus {
     font-weight: 600;
     height: 30px;
     background-color: inherit;
+  }
+
+  input:focus {
+    pointer-events: auto;
+    background-color: var(--middle-grey);
   }
 
   div {
@@ -283,6 +311,10 @@ select:focus {
 
 .positive {
   color: var(--green);
+}
+
+.negative {
+  color: var(--red);
 }
 
 .flex {

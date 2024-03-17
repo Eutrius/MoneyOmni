@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MoneyOmni</title>
     <link href="style.css" rel="stylesheet" />
+    <script src="utils.js" defer></script>
+    <script src="storage.js" defer></script>
     <script src="index.js" defer></script>
   </head>
   <body>
@@ -13,7 +15,7 @@
         <div id="home" class="flex">
           <div id="header" class="flex">
             <img src="images/logo.png" alt="MoneyOmni" />
-            <div id="balance" class="positive">$2910.5</div>
+            <div id="balance"></div>
           </div>
           <div id="form-div" class="white-container">
             <form id="entry-form" action="submit">
@@ -25,17 +27,13 @@
               />
               <input
                 type="number"
+                step="any"
                 autocomplete="off"
                 id="amount"
                 placeholder="$ Amount"
               />
-              <select id="category-selector">
+              <select id="category">
                 <option value="" selected>Category</option>
-                <option value="bills">Bills</option>
-                <option value="groceries">Groceries</option>
-                <option value="income">Income</option>
-                <option value="misc">Misc</option>
-                <option value="presents">Presents</option>
               </select>
               <input
                 type="date"
@@ -46,63 +44,11 @@
               <button type="submit" id="add-entry">Add</button>
             </form>
           </div>
-          <div id="entry-list" class="white-container overflow-scroll">
-            <div class="entry">
-              <div>
-                <h6>Payroll</h6>
-                <p>Feb 02 • Income</p>
-              </div>
-              <div class="edit-delete-buttons">
-                <button></button>
-                <button></button>
-              </div>
-              <div class="positive">+$3000</div>
-            </div>
-            <div class="entry">
-              <div>
-                <h6>Movie tickets</h6>
-                <p>Feb 03 • Presents</p>
-              </div>
-              <div class="edit-delete-buttons">
-                <button></button>
-                <button></button>
-              </div>
-              <div>-$20</div>
-            </div>
-            <div class="entry">
-              <div>
-                <h6>Phone charger</h6>
-                <p>Feb 07 • Misc</p>
-              </div>
-              <div class="edit-delete-buttons">
-                <button></button>
-                <button></button>
-              </div>
-              <div>-$18</div>
-            </div>
-            <div class="entry">
-              <div>
-                <h6>Internet</h6>
-                <p>Feb 10 • Bills</p>
-              </div>
-              <div class="edit-delete-buttons">
-                <button></button>
-                <button></button>
-              </div>
-              <div>-$50</div>
-            </div>
-            <div class="entry">
-              <div>
-                <h6>Milk</h6>
-                <p>Feb 26 • Groceries</p>
-              </div>
-              <div class="edit-delete-buttons">
-                <button></button>
-                <button></button>
-              </div>
-              <div>-$1.5</div>
-            </div>
-          </div>
+          <button id="cancel-button" class="white-container flex none">
+            <img src="images/cancel.png" alt="" />
+            <p>Cancel</p>
+          </button>
+          <div id="entry-list" class="white-container overflow-scroll"></div>
         </div>
         <div id="categories" class="white-container flex none">
           <h2>Categories</h2>
