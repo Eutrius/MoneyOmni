@@ -48,7 +48,7 @@ select:focus {
 #app {
   flex-direction: column;
   background: var(--light-grey);
-  width: 375px;
+  width: min(375px, 100vw);
   height: min(667px, 100vh);
   padding: 15px 15px 0px 15px;
   border-radius: 10px;
@@ -60,15 +60,19 @@ select:focus {
 }
 
 #header {
-  align-items: center;
-  justify-content: space-between;
-  padding-inline: 5px;
+  display: grid;
+  grid-template-columns: 40% auto;
   margin-bottom: 15px;
+}
+
+#logo {
+  align-self: center;
 }
 
 #balance {
   font-weight: 700;
   font-size: 30px;
+  text-align: right;
 }
 
 #form-div {

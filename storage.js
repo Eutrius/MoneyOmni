@@ -26,7 +26,6 @@ const storage = (() => {
       if (entry.category === category) {
         entry.category = newCategory;
       }
-      console.log(entries);
     }
     save("entries");
   };
