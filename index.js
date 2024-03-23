@@ -8,20 +8,19 @@ $("add-category").addEventListener("click", () => {
 });
 
 const handleAddCategory = ({ key, target }) => {
+  if (key !== "Enter" && key !== "Escape") return;
   const value = capitalizeFirstLetter(target.value);
-  if (key === "Enter" || key === "Escape") {
-    if (key === "Enter" && value !== "") {
-      // early exit if category is not unique
-      if (!storage.isCategoryUnique(value)) {
-        return;
-      }
-      target.value = "";
-      storage.addCategory(value);
-      const index = storage.getCategoryIndex(value);
-      renderCategory(value, index);
+  if (key === "Enter" && value !== "") {
+    // Early exit if category is not unique
+    if (!storage.isCategoryUnique(value)) {
+      return;
     }
-    showNewCategoryInput(false);
+    target.value = "";
+    storage.addCategory(value);
+    const index = storage.getCategoryIndex(value);
+    renderCategory(value, index);
   }
+  showNewCategoryInput(false);
 };
 
 const handleSubmit = (event) => {
@@ -29,7 +28,7 @@ const handleSubmit = (event) => {
   const inputs = getEntryInputs();
   const [note, amount] = inputs;
 
-  // check name and amount input value
+  // Check name and amount input value
   if (isInputEmpty(note) || isInputEmpty(amount)) return;
   if (amount.value === "0") {
     showErrorInput(amount);
@@ -46,14 +45,14 @@ const handleSubmit = (event) => {
   newEntry.note = capitalizeFirstLetter(newEntry.note);
 
   storage.addEntry(newEntry);
-  renderEntry(newEntry, storage.getEntryIndexById(newEntry.id));
+  renderEntry(newEntry, storage.getEntries().indexOf(newEntry));
   updateBalance();
   showCancelButton(false);
   resetEntryForm();
 };
 
 const handleEdit = ({ target }) => {
-  // check categories div visibility
+  // Check categories div visibility
   const element = getMainElement(target);
   $("categories").classList.contains("none")
     ? editEntry(element)
@@ -65,6 +64,50 @@ const handleDelete = ({ target }) => {
   $("categories").classList.contains("none")
     ? deleteEntry(element)
     : deleteCategory(element);
+};
+
+const handleUpdate = () => {
+  const oldEntryElement = document.getElementsByClassName("to-edit")[0];
+  deleteEntry(oldEntryElement);
+  $("entry-form").removeEventListener("submit", handleUpdate);
+};
+
+const handleCancel = () => {
+  resetEntryForm();
+  removeToEditMark();
+  showCancelButton(false);
+  $("cancel-button").removeEventListener("click", handleCancel);
+  $("entry-form").removeEventListener("submit", handleUpdate);
+};
+
+const handleCategoryInputBlur = ({ target }) => {
+  target.value = target.placeholder;
+  showCategoriesButtons(true);
+  target.removeEventListener("keyup", handleCategoryInputKey);
+  target.removeEventListener("blur", handleCategoryInputBlur);
+};
+
+const handleCategoryInputKey = ({ key, target }) => {
+  if (key !== "Enter" && key !== "Escape") return;
+  const initialValue = target.placeholder;
+  const newValue = capitalizeFirstLetter(target.value);
+  if (key === "Enter") {
+    if (
+      newValue !== initialValue &&
+      (!newValue || !storage.isCategoryUnique(newValue))
+    ) {
+      return;
+    }
+    // Set the value back to delete the right element
+    target.value = initialValue;
+    deleteCategory(target.parentNode);
+
+    storage.addCategory(newValue);
+    storage.updateEntriesCategory(initialValue, newValue);
+    renderCategory(newValue, storage.getCategoryIndex(newValue));
+    renderEntries(); // Rerender entry list
+  }
+  target.blur();
 };
 
 const deleteCategory = (categoryElement) => {
@@ -85,70 +128,26 @@ const deleteCategoryOption = (category) => {
 };
 
 const editEntry = (entryElement) => {
+  // Add the "to-edit" class to the entryElement to mark it
+  entryElement.classList.add("to-edit");
+  entryElement.toEdit = "false";
   const entry = storage.getEntryById(entryElement.id);
   populateEntryForm(entry);
   showCancelButton(true);
 
-  const entryForm = $("entry-form");
-
-  const handleUpdate = () => {
-    deleteEntry(entryElement);
-    entryForm.removeEventListener("submit", handleUpdate);
-  };
-
-  const cancelButton = $("cancel-button");
-
-  const handleCancel = () => {
-    resetEntryForm();
-    showCancelButton(false);
-    cancelButton.removeEventListener("click", handleCancel);
-    entryForm.removeEventListener("submit", handleUpdate);
-  };
-
-  entryForm.addEventListener("submit", handleUpdate);
-  cancelButton.addEventListener("click", handleCancel);
+  $("entry-form").addEventListener("submit", handleUpdate);
+  $("cancel-button").addEventListener("click", handleCancel);
 };
 
 const editCategory = (categoryElement) => {
-  // get the input element
+  // Get the input element
   const input = categoryElement.firstElementChild;
-  let initialValue = input.value;
-  let newValue;
-
+  // Set the current value as its placeholder to preserve it as the initial value.
+  input.placeholder = input.value;
   input.focus();
 
-  const handleKeyPress = ({ key }) => {
-    if (key === "Enter" || key === "Escape") {
-      if (key === "Enter") {
-        if (
-          input.value !== initialValue &&
-          (!input.value || !storage.isCategoryUnique(input.value))
-        ) {
-          return;
-        }
-        newValue = capitalizeFirstLetter(input.value);
-        // set the value back to delete the right element
-        input.value = initialValue;
-        deleteCategory(categoryElement);
-
-        storage.addCategory(newValue);
-        storage.updateEntriesCategory(initialValue, newValue);
-        renderCategory(newValue, storage.getCategoryIndex(newValue));
-        renderEntries(); // rerender Entry
-      }
-      input.blur();
-    }
-  };
-
-  const handleOnBlur = () => {
-    input.value = initialValue;
-    showCategoriesButtons(true);
-    input.removeEventListener("keyup", handleKeyPress);
-    input.removeEventListener("blur", handleOnBlur);
-  };
-
-  input.addEventListener("keyup", handleKeyPress);
-  input.addEventListener("blur", handleOnBlur);
+  input.addEventListener("keyup", handleCategoryInputKey);
+  input.addEventListener("blur", handleCategoryInputBlur);
   showCategoriesButtons(false);
 };
 
@@ -164,9 +163,7 @@ const showCategoriesButtons = (toShow) => {
   const buttonsDivs = document.querySelectorAll(
     "#categories .edit-delete-buttons",
   );
-  for (let div of buttonsDivs) {
-    div.classList.toggle("none", !toShow);
-  }
+  buttonsDivs.forEach((div) => div.classList.toggle("none", !toShow));
 };
 
 const showNewCategoryInput = (toShow) => {
@@ -189,10 +186,10 @@ const showCancelButton = (toShow) => {
 };
 
 const generateEditDeleteButtons = () => {
-  const container = create$("div");
+  const container = $create("div");
   container.className = "edit-delete-buttons";
-  const editButton = create$("button");
-  const deleteButton = create$("button");
+  const editButton = $create("button");
+  const deleteButton = $create("button");
 
   editButton.addEventListener("click", handleEdit);
   deleteButton.addEventListener("click", handleDelete);
@@ -202,10 +199,10 @@ const generateEditDeleteButtons = () => {
 };
 
 const generateCategoryElement = (category) => {
-  const newCategory = create$("div");
+  const newCategory = $create("div");
   newCategory.className = "category";
 
-  const input = create$("input");
+  const input = $create("input");
   input.type = "text";
   input.value = category;
 
@@ -215,13 +212,13 @@ const generateCategoryElement = (category) => {
 };
 
 const generateEntryElement = ({ id, note, amount, date, category }) => {
-  const newEntry = create$("div");
+  const newEntry = $create("div");
   newEntry.id = id;
   newEntry.className = "entry";
 
-  const labelDiv = create$("div");
-  const noteElement = create$("h6");
-  const dateCategory = create$("p");
+  const labelDiv = $create("div");
+  const noteElement = $create("h6");
+  const dateCategory = $create("p");
   noteElement.textContent = note;
   dateCategory.textContent =
     `${parseDate(date)} ` + (!category ? "" : `• ${category}`);
@@ -229,9 +226,9 @@ const generateEntryElement = ({ id, note, amount, date, category }) => {
 
   const buttons = generateEditDeleteButtons();
 
-  const amountDiv = create$("div");
+  const amountDiv = $create("div");
   if (isAmountPositive(amount)) amountDiv.className = "positive";
-  amountDiv.textContent = parseAmount(amount);
+  amountDiv.textContent = formatAmount(amount);
 
   newEntry.append(labelDiv, buttons, amountDiv);
   return newEntry;
@@ -249,7 +246,7 @@ const renderEntry = (entry, index = -1) => {
 };
 
 const renderOption = (category, index = -1) => {
-  const element = create$("option");
+  const element = $create("option");
   element.value = category;
   element.textContent = category;
   element.className = "category-option";
@@ -257,25 +254,21 @@ const renderOption = (category, index = -1) => {
 };
 
 const renderEntries = () => {
-  // remove all children to so we can also rerender
+  // Remove all children to so we can also rerender
   $("entry-list").replaceChildren([]);
-  for (let entry of storage.getEntries()) {
-    renderEntry(entry);
-  }
+  storage.getEntries().forEach((entry) => renderEntry(entry));
 };
 
 const renderCategories = () => {
-  for (let category of storage.getCategories()) {
-    renderCategory(category);
-  }
+  storage.getCategories().forEach((category) => renderCategory(category));
 };
 
 const updateBalance = () => {
   const balanceElement = $("balance");
   const balance = storage.getBalance();
   balanceElement.textContent = isAmountPositive(balance)
-    ? parseAmount(balance).replace("+", "") // remove +
-    : parseAmount(balance);
+    ? formatAmount(balance).replace("+", "") // Remove "+"
+    : formatAmount(balance);
   if (balance === "0") {
     balanceElement.className = "";
     return;

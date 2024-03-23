@@ -1,14 +1,14 @@
-// get element by id
+// Get element by id
 const $ = (id) => {
   return document.getElementById(id);
 };
-// create element
-const create$ = (element) => {
+// Create element
+const $create = (element) => {
   return document.createElement(element);
 };
 
 const insertElementByClassAndIndex = (element, index) => {
-  let referenceElement = getElementbyClassAndIndex(element.className, index);
+  let referenceElement = getElementByClassAndIndex(element.className, index);
   let list;
 
   switch (element.className) {
@@ -30,7 +30,7 @@ const insertElementByClassAndIndex = (element, index) => {
   list.insertBefore(element, referenceElement);
 };
 
-const getElementbyClassAndIndex = (className, index) => {
+const getElementByClassAndIndex = (className, index) => {
   if (index === -1) return null;
   const elements = document.getElementsByClassName(className);
   return elements[index];
@@ -41,27 +41,27 @@ const resetEntryForm = () => {
 };
 
 const isInputEmpty = (input) => {
-  if (input.value === "") {
-    showErrorInput(input);
-    return true;
-  }
-  return false;
+  if (input.value !== "") return false;
+  showErrorInput(input);
+  return true;
 };
 
 const showErrorInput = (input, toShow = true) => {
   input.classList.toggle("error", toShow);
-  if (toShow) {
-    input.focus();
-    const handleOnBlur = () => {
-      showErrorInput(input, false);
-      input.removeEventListener("blur", handleOnBlur);
-    };
+  if (!toShow) {
     input.addEventListener("blur", handleOnBlur);
+    return;
   }
+
+  input.focus();
+  const handleOnBlur = () => {
+    showErrorInput(input, false);
+    input.removeEventListener("blur", handleOnBlur);
+  };
 };
 
 const getEntryInputs = () => {
-  // return all inputs inside entry form excluding the add button
+  // Return all inputs inside entry form excluding the add button
   return [...$("entry-form").children].slice(0, -1);
 };
 
@@ -80,13 +80,11 @@ const parseDate = (date) => {
   });
 };
 
-const parseAmount = (amount) => {
+const formatAmount = (amount) => {
   if (Number(amount) === 0) return "$0";
-  if (isAmountPositive(amount)) {
-    return `+$${Number(amount)}`;
-  } else {
-    return `-$${amount.slice(1)}`;
-  }
+  return isAmountPositive(amount)
+    ? `+$${Number(amount)}`
+    : `-$${amount.slice(1)}`;
 };
 
 const isAmountPositive = (amount) => {
@@ -95,14 +93,17 @@ const isAmountPositive = (amount) => {
 
 const getDateToday = () => {
   const date = new Date()
-    .toLocaleDateString("en-GB") // will return "dd/mm/yyyy"
+    .toLocaleDateString("en-GB") // This  will return "dd/mm/yyyy"
     .split("/");
-  return date.reverse().join("-"); // will return "yyyy-mm-dd"
+  return date.reverse().join("-"); // This will return "yyyy-mm-dd"
 };
 
 const populateEntryForm = (entry) => {
   const inputs = getEntryInputs();
-  for (let input of inputs) {
-    input.value = entry[input.id];
-  }
+  inputs.forEach((input) => (input.value = entry[input.id]));
+};
+
+const removeToEditMark = () => {
+  const entryElement = document.getElementsByClassName("to-edit")[0];
+  entryElement.classList.remove("to-edit");
 };

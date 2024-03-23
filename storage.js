@@ -5,14 +5,10 @@ const storage = (() => {
   let balance = localStorage.getItem("moneyOmni-balance") || "0";
 
   const addCategory = (newCategory) => {
-    for (let category of categories) {
-      if (newCategory < category) {
-        categories.splice(getCategoryIndex(category), 0, newCategory);
-        save("categories");
-        return;
-      }
-    }
-    categories.push(newCategory);
+    const index = categories.findIndex((category) => newCategory < category);
+    index != -1
+      ? categories.splice(index, 0, newCategory)
+      : categories.push(newCategory);
     save("categories");
   };
 
@@ -22,11 +18,9 @@ const storage = (() => {
   };
 
   const updateEntriesCategory = (category, newCategory) => {
-    for (let entry of entries) {
-      if (entry.category === category) {
-        entry.category = newCategory;
-      }
-    }
+    entries.forEach((entry) =>
+      entry.category === category ? (entry.category = newCategory) : null,
+    );
     save("entries");
   };
 
@@ -40,26 +34,16 @@ const storage = (() => {
 
   const addEntry = (newEntry) => {
     updateBalance(newEntry.amount);
-    for (let entry of entries) {
-      if (newEntry.date < entry.date) {
-        entries.splice(getEntryIndexById(entry.id), 0, newEntry);
-        save("entries");
-        return;
-      }
-    }
-    entries.push(newEntry);
+    const index = entries.findIndex((entry) => newEntry.date < entry.date);
+    index != -1 ? entries.splice(index, 0, newEntry) : entries.push(newEntry);
     save("entries");
   };
 
   const removeEntry = (id) => {
-    const index = getEntryIndexById(id);
-    updateBalance(-entries[index].amount);
-    entries.splice(index, 1);
+    const entry = getEntryById(id);
+    updateBalance(-entry.amount);
+    entries.splice(entries.indexOf(entry), 1);
     save("entries");
-  };
-
-  const getEntryIndexById = (id) => {
-    return entries.findIndex((entry) => entry.id === id);
   };
 
   const getEntryById = (id) => {
@@ -110,6 +94,5 @@ const storage = (() => {
     addEntry,
     removeEntry,
     getEntryById,
-    getEntryIndexById,
   };
 })();
